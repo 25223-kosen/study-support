@@ -222,6 +222,7 @@ elif menu=="成績分析":
     st.header("成績分析")
     if len(tests)==0:
         st.info("テスト結果を入力すると、ここで分析できます。")
+        st.stop()
     else:
         analysis=tests.copy()
         analysis["点数"]=pd.to_numeric(analysis["点数"],errors="coerce")
@@ -241,12 +242,8 @@ elif menu=="成績分析":
     st.dataframe(subject_ave,use_container_width=True)
 
     st.subheader("教科別平均")
-    if analysis.empty:
-        st.info("📝 テスト結果を入力してください")
-        st.stop()
-    else:
-        fig=px.bar(subject_ave,x="教科",y="平均点",title="教科別平均点")
-        st.plotly_chart(fig,use_container_width=True)
+    fig=px.bar(subject_ave,x="教科",y="平均点",title="教科別平均点")
+    st.plotly_chart(fig,use_container_width=True)
     
 
     st.subheader("点数の推移")
