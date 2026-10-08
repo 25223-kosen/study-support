@@ -190,7 +190,10 @@ elif menu=="テスト結果":
     with st.form("test_form"):
         col1,col2=st.columns(2)
         with col1:
-            test_name=st.text_input("テスト名",placeholder="例：1年前期期末")
+            test_name=test_names = [ "1学期中間テスト","1学期期末テスト","2学期中間テスト","2学期期末テスト","学年末テスト","その他"]
+            test_name = st.selectbox("テスト名",test_names)
+            if test_name == "その他":
+                test_name = st.text_input("テスト名を入力してください")
             subject=st.text_input("教科",placeholder="例：国語")
             score=st.number_input("点数",min_value=0.0,value=0.0,step=1.0)
         with col2:
