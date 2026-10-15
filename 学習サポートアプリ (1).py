@@ -119,15 +119,17 @@ elif menu=="時間割":
             else:
                 new_data=pd.DataFrame([{"ニックネーム":username,"曜日":day,"時限":period,"教科":subject,"教室":classroom,"先生":teacher}])
                 timetable=pd.concat([timetable,new_data],ignore_index=True)
-                timetable.to_csv(timetable_file,index=False,encoding="utf-8-sig")
+                timetable.to_csv(timetable_file,index=False)
                 st.success("時間割を追加しました。")
                 st.rerun()
 
     st.subheader("登録されている時間割")
     if len(timetable)>0:
-        timetable["時限"]=pd.to_numeric(timetable["時限"],errors="coerce")
-        timetable=timetable.sort_values(["曜日","時限"])
-        st.dataframe(timetable,use_container_width=True)
+        display_timetable["時限"]=pd.to_numeric(display_timetable["時限"],errors="coerce")
+        weekday_order=["月","火","水","木","金","土","日"]
+        display_timetable["曜日"]=pd.Categorical(display_timetable["曜日"],categories=weekday_order,ordered=True)
+        display_timetable=display_timetable.sort_values(by=["曜日","時限"])
+        st.dataframe(display_timetable,use_container_width=True)
     else:
         st.info("時間割が入力されていません。")
 elif menu=="課題管理":
