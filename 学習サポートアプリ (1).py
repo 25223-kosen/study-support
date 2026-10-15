@@ -107,7 +107,8 @@ elif menu=="時間割":
         col1,col2,=st.columns(2)
         with col1:
             day=st.selectbox("曜日",["月","火","水","木","金","土","日"])
-            period=st.selectbox("時限",["1,2","3,4","5,6","7,8"])
+            period=st.selectbox("時限",["1,2","3,4","5,6","7,8"],key="period_select")
+            st.write("選択された時限：",period)
             subject=st.text_input("教科")
         with col2:
             classroom=st.text_input("場所")
