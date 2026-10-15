@@ -126,7 +126,8 @@ elif menu=="時間割":
     st.subheader("登録されている時間割")
     if len(timetable)>0:
         display_timetable = timetable.copy()
-        display_timetable["時限"]=pd.to_numeric(display_timetable["時限"],errors="coerce")
+        period_order=["1,2","3,4","5,6","7,8"]
+        display_timetable["時限"]=pd.Categorical(display_timetable["時限"],categories=period_order,ordered=True)
         weekday_order=["月","火","水","木","金","土","日"]
         display_timetable["曜日"]=pd.Categorical(display_timetable["曜日"],categories=weekday_order,ordered=True)
         display_timetable=display_timetable.sort_values(by=["曜日","時限"])
