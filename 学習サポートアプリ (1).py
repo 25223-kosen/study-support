@@ -125,11 +125,11 @@ elif menu=="時間割":
 
     st.subheader("登録されている時間割")
     if len(timetable)>0:
-        display_timetable["時限"]=pd.to_numeric(display_timetable["時限"],errors="coerce")
+        timetable["時限"]=pd.to_numeric(timetable["時限"],errors="coerce")
         weekday_order=["月","火","水","木","金","土","日"]
-        display_timetable["曜日"]=pd.Categorical(display_timetable["曜日"],categories=weekday_order,ordered=True)
-        display_timetable=display_timetable.sort_values(by=["曜日","時限"])
-        st.dataframe(display_timetable,use_container_width=True)
+        timetable["曜日"]=pd.Categorical(timetable["曜日"],categories=weekday_order,ordered=True)
+        timetable=timetable.sort_values(by=["曜日","時限"])
+        st.dataframe(timetable,use_container_width=True)
     else:
         st.info("時間割が入力されていません。")
 elif menu=="課題管理":
