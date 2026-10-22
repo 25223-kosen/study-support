@@ -172,27 +172,29 @@ elif menu=="課題管理":
                     icon="✅"
                 elif days<0:
                     icon="❌"
-                        elif days<=2:
-                            icon="🔴"
-                        elif days<=6:
-                            icon="🟡"
-                        else:
-                            icon="🟢"
-                        col1,col2,col3=st.columns([1,5,2])
-                        with col1:
-                            st.write(icon)
-                        with col2:
-                            st.write(f"**{row["教科"]}**" f"{row["課題名"]}")
-                            st.write(f"提出期限：{row["提出期限"]}")
-                        with col3:
-                            done=st.checkbox("提出済み",value=str(row["提出済み"])=="True",key=f"assignment_{index}")
-                            if done!=(str(row["提出済み"])=="True"):
-                                assignments.loc[index,"提出済み"]=done
-                                assignments.to_csv(assignment_file,index=False,encoding="utf-8-sig")
-                                st.rerun()
-                            st.divider()
+                elif days<=2:
+                    icon="🔴"
+                elif days<=6:
+                    icon="🟡"
                 else:
-                    st.info("まだ課題が入力されていません。")
+                    icon="🟢"
+                col1,col2,col3=st.columns([1,5,2])
+                with col1:
+                    st.write(icon)
+                with col2:
+                    st.write(f"**{row["教科"]}**" f"{row["課題名"]}")
+                    st.write(f"提出期限：{row["提出期限"]}")
+                with col3:
+                    done=st.checkbox("提出済み",value=False,key=f"assignment_{index}")
+                    if done:
+                        assignments.loc[index,"提出済み"]=True
+                        assignments.to_csv(assignment_file,index=False,encoding="utf-8-sig")
+                        st.rerun()
+                st.divider()
+           else:
+               st.success("すべての課題を提出済みにしました")
+        else:
+            st.info("まだ課題が入力されていません。")
 
 elif menu=="テスト結果":
     st.header("テスト結果")
