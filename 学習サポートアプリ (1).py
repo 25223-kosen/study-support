@@ -43,7 +43,8 @@ if menu=="ホーム":
     st.header("ホーム")
     st.subheader("課題")
     if len(assignments)>0:
-        unfinished=assignments[assignments["提出済み"].astype(str)!="True"]
+        submitted=assingments["提出済み"].astype(str).str.lower()
+        unfinished=assignments[~submitted.isin(["true","はい","提出済み"])]
         st.write(f"未提出の課題:**{len(unfinished)}件**")
         if len(unfinished)>0:
             for _,row in unfinished.head(5).iterrows():
@@ -68,8 +69,10 @@ if menu=="ホーム":
                             f"提出期限：{row["提出期限"]}"
                             f"({text})")
 
-                except:
+                except Exception:
                     st.write(f"{row["教科"]}:{row["課題名"]}")
+        else:
+            st.success("未提出の課題はありません")
     else:
         st.info("課題が入力されていません。")
 
