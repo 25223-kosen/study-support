@@ -43,7 +43,7 @@ if menu=="ホーム":
     st.header("ホーム")
     st.subheader("課題")
     if len(assignments)>0:
-        submitted=assingments["提出済み"].astype(str).str.lower()
+        submitted=assignments["提出済み"].astype(str).str.lower()
         unfinished=assignments[~submitted.isin(["true","はい","提出済み"])]
         st.write(f"未提出の課題:**{len(unfinished)}件**")
         if len(unfinished)>0:
