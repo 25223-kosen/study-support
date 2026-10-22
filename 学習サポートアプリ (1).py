@@ -49,7 +49,7 @@ if menu=="ホーム":
         if len(unfinished)>0:
             for _,row in unfinished.head(5).iterrows():
                 try:
-                    deadline=pd.to_datetime(row["提出期限"]).date
+                    deadline=pd.to_datetime(row["提出期限"]).date()
                     days=(deadline-date.today()).days
                     if days<0:
                         icon="❌"
@@ -159,37 +159,40 @@ elif menu=="課題管理":
                 st.rerun()
     st.subheader("課題一覧")
     if len(assignments)>0:
-        for index,row in assignments.iterrows():
-            try:
-                deadline=pd.to_datetime(row["提出期限"]).date()
-                days=(deadline-date.today()).days
-            except:
-                days=999
-            if str(["提出済み"])=="True":
-                icon="✅"
-            elif days<0:
-                icon="❌"
-            elif days<=2:
-                icon="🔴"
-            elif days<=6:
-                icon="🟡"
-            else:
-                icon="🟢"
-            col1,col2,col3=st.columns([1,5,2])
-            with col1:
-                st.write(icon)
-            with col2:
-                st.write(f"**{row["教科"]}**" f"{row["課題名"]}")
-                st.write(f"提出期限：{row["提出期限"]}")
-            with col3:
-                done=st.checkbox("提出済み",value=str(row["提出済み"])=="True",key=f"assignment_{index}")
-                if done!=(str(row["提出済み"])=="True"):
-                    assignments.loc[index,"提出済み"]=done
-                    assignments.to_csv(assignment_file,index=False,encoding="utf-8-sig")
-                    st.rerun()
-                st.divider()
-    else:
-        st.info("まだ課題が入力されていません。")
+        submitted=assignments["提出済み"].astype(str).str.lower()
+        unfinished=assignments[~submitted.isin(["true","はい","提出済み"])]
+        if len(unfinished)>0:
+            for index,row in assignments.iterrows():
+                try:
+                    deadline=pd.to_datetime(row["提出期限"]).date()
+                    days=(deadline-date.today()).days
+                except Exception:
+                        days=999
+                if str(["提出済み"])=="True":
+                    icon="✅"
+                elif days<0:
+                    icon="❌"
+                        elif days<=2:
+                            icon="🔴"
+                        elif days<=6:
+                            icon="🟡"
+                        else:
+                            icon="🟢"
+                        col1,col2,col3=st.columns([1,5,2])
+                        with col1:
+                            st.write(icon)
+                        with col2:
+                            st.write(f"**{row["教科"]}**" f"{row["課題名"]}")
+                            st.write(f"提出期限：{row["提出期限"]}")
+                        with col3:
+                            done=st.checkbox("提出済み",value=str(row["提出済み"])=="True",key=f"assignment_{index}")
+                            if done!=(str(row["提出済み"])=="True"):
+                                assignments.loc[index,"提出済み"]=done
+                                assignments.to_csv(assignment_file,index=False,encoding="utf-8-sig")
+                                st.rerun()
+                            st.divider()
+                else:
+                    st.info("まだ課題が入力されていません。")
 
 elif menu=="テスト結果":
     st.header("テスト結果")
