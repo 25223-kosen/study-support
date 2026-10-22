@@ -162,15 +162,14 @@ elif menu=="課題管理":
         submitted=assignments["提出済み"].astype(str).str.lower()
         unfinished=assignments[~submitted.isin(["true","はい","提出済み"])]
         if len(unfinished)>0:
-            for index,row in assignments.iterrows():
+            for index,row in unfinished.iterrows():
                 try:
                     deadline=pd.to_datetime(row["提出期限"]).date()
                     days=(deadline-date.today()).days
                 except Exception:
-                        days=999
-                if str(["提出済み"])=="True":
-                    icon="✅"
-                elif days<0:
+                    days=999
+                    
+                if days<0:
                     icon="❌"
                 elif days<=2:
                     icon="🔴"
