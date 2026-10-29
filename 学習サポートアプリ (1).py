@@ -190,8 +190,6 @@ elif menu=="課題管理":
                         assignments.to_csv(assignment_file,index=False,encoding="utf-8-sig")
                         st.rerun()
                 st.divider()
-            else:
-                st.success("すべての課題を提出済みにしました。")
         else:
             st.info("まだ課題が入力されていません。")
     
