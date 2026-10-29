@@ -208,6 +208,8 @@ elif menu=="テスト結果":
         with col2:
             full_score=st.number_input("満点",min_value=1.0,value=100.0,step=10.0)
             test_date=st.date_input("テスト日",value=date.today())
+            weight=st.number_input("評価割合(%)",min_value=0,max_value=100,value=50,step=5)
+            
         submitted=st.form_submit_button("テスト結果を追加")
         if submitted:
             if test_name=="" or subject=="":
@@ -215,7 +217,7 @@ elif menu=="テスト結果":
             elif score>full_score:
                 st.error("点数が満点を超えています")
             else:
-                new_data=pd.DataFrame([{"ニックネーム":username,"テスト名":test_name,"教科":subject,"点数":score,"満点":full_score,"日付":test_date.strftime("%Y-%m-%d")}])
+                new_data=pd.DataFrame([{"ニックネーム":username,"テスト名":test_name,"教科":subject,"点数":score,"満点":full_score,"評価割合"weight,"日付":test_date.strftime("%Y-%m-%d")}])
                 tests=pd.concat([tests,new_data],ignore_index=True)
                 tests.to_csv(test_file,index=False,encoding="utf-8-sig")
                 st.success("テスト結果を追加しました。")
@@ -240,6 +242,11 @@ elif menu=="成績分析":
         analysis["点数"]=pd.to_numeric(analysis["点数"],errors="coerce")
         analysis["満点"]=pd.to_numeric(analysis["満点"],errors="coerce")
         analysis["得点率"]=(analysis["点数"]/analysis["満点"]*100)
+        if "評価割合" not in analysis.columns:
+            analysis["評価割合"]=50
+        analysis["評価割合"]=pd.to_numeric(analysis["評価割合"],errors="coerce")
+        analysis=analysis.dropna(subset=["教科","点数","満点","評価割合"])
+        analysis=analysis[analysis["満点"]>0]
 
         average=analysis["点数"].mean()
         max_score=analysis["点数"].max()
@@ -263,6 +270,20 @@ elif menu=="成績分析":
     analysis=analysis.sort_values("日付")
     fig2=px.line(analysis,x="日付",y="点数",color="教科",markers=True,title="テストの点数の推移")
     st.plotly_chart(fig2,use_container_width=True)
+
+    st.subheader("試験評価")
+    weighted_results=[]
+    for subject,group in analysis.groupby("教科"):
+        total_weight=group["評価割合"].sum()
+        if total_weight==100:
+            weighted_score=(group["得点率"]*group["評価割合"]/100).sum()
+            weighted_results.append({"教科":subject,"割合合計(％)":total_weight,"反映した成績":round(weighted_score,1)})
+        else:
+            weighted_results.append({"教科": subject,"割合合計（％）": total_weight,"反映した成績": None})
+    weighted_df=pd.DataFrame(weighted_results)
+    st.subheader("反映した教科別成績")
+    st.dataframe(weighted_df,use_container_width=True)
+            
 
     st.subheader("教科別分析")
     subjects=analysis["教科"].dropna().unique().tolist()
